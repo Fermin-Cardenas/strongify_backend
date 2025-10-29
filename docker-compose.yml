@@ -13,7 +13,7 @@ services:
       - DATABASE_PASSWORD=postgres
     depends_on:
       - java_db
-	restart: on-failure
+    restart: on-failure
 
   java_db:
     container_name: java_db
