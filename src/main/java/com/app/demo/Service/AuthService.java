@@ -67,7 +67,7 @@ public class AuthService {
         user.setPhoneNumber(request.getPhone());
         user = userRepository.save(user);
 
-        Role role = roleRepository.findById(1L).orElseThrow(() -> new RuntimeException("Default role not found"));
+        Role role = roleRepository.findById(2L).orElseThrow(() -> new RuntimeException("Default role not found"));
 
         AuthUser authUser = new AuthUser();
         authUser.setUsername(request.getUsername());

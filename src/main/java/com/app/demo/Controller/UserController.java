@@ -6,8 +6,10 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.app.demo.DTO.Request.ChangePasswordRequest;
+import com.app.demo.DTO.Request.UpdateRolRequest;
 import com.app.demo.DTO.Request.UpdateUserRequest;
 import com.app.demo.DTO.Response.UserResponse;
 import com.app.demo.Service.UserService;
@@ -50,7 +53,8 @@ public class UserController {
 	}
 
 	@PutMapping("/change-password")
-	public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest request, Authentication authentication) {
+	public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest request,
+			Authentication authentication) {
 		String username = authentication.getName();
 
 		try {
@@ -76,6 +80,17 @@ public class UserController {
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado"));
 		}
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/update-user-rol/{user_id}")
+	public ResponseEntity<?> updateUserRol(
+			@PathVariable Long user_id,
+			@RequestBody UpdateRolRequest request) {
+
+		return userService.updateRol(user_id, request)
+				.map(ResponseEntity::ok)
+				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
 }

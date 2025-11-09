@@ -1,12 +1,16 @@
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Config\ApplicationConfig.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Config\SecurityConfig.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Controller\AuthController.java
+C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Controller\RoleController.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Controller\UserController.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\DTO\Request\ChangePasswordRequest.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\DTO\Request\LoginRequest.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\DTO\Request\RegisterRequest.java
+C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\DTO\Request\RoleRequest.java
+C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\DTO\Request\UpdateRolRequest.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\DTO\Request\UpdateUserRequest.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\DTO\Response\AuthResponse.java
+C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\DTO\Response\RoleResponse.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\DTO\Response\UserResponse.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Entity\AuthUser.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Entity\Role.java
@@ -18,4 +22,5 @@ C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Repos
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Repository\RoleRepository.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Repository\UserRepository.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Service\AuthService.java
+C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Service\RoleService.java
 C:\Projects\eclipse-workspace\gymapp-backend-v2\src\main\java\com\app\demo\Service\UserService.java
