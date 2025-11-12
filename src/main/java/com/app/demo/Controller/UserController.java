@@ -1,6 +1,7 @@
 package com.app.demo.Controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +26,7 @@ import com.app.demo.DTO.Request.ChangePasswordRequest;
 import com.app.demo.DTO.Request.UpdateRolRequest;
 import com.app.demo.DTO.Request.UpdateUserRequest;
 import com.app.demo.DTO.Response.UserResponse;
+import com.app.demo.Entity.Reserva;
 import com.app.demo.Service.UserService;
 
 @RestController
@@ -91,6 +94,13 @@ public class UserController {
 		return userService.updateRol(user_id, request)
 				.map(ResponseEntity::ok)
 				.orElseGet(() -> ResponseEntity.notFound().build());
+	}
+
+	@GetMapping("/me/reservas")
+	public ResponseEntity<List<Reserva>> getAllReservas(Authentication authentication) {
+		String username = authentication.getName();
+		List<Reserva> reservas = userService.listarReservasPorUsuario(username);
+		return ResponseEntity.ok(reservas);
 	}
 
 }

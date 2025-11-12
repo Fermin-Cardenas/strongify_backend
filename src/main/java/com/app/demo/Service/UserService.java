@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,9 +21,11 @@ import com.app.demo.DTO.Request.UpdateRolRequest;
 import com.app.demo.DTO.Request.UpdateUserRequest;
 import com.app.demo.DTO.Response.UserResponse;
 import com.app.demo.Entity.AuthUser;
+import com.app.demo.Entity.Reserva;
 import com.app.demo.Entity.Role;
 import com.app.demo.Entity.User;
 import com.app.demo.Repository.AuthUserRepository;
+import com.app.demo.Repository.ReservaRepository;
 import com.app.demo.Repository.RoleRepository;
 import com.app.demo.Repository.UserRepository;
 
@@ -35,19 +38,22 @@ public class UserService {
 	private final AuthUserRepository authUserRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final RoleRepository roleRepository;
+	private final ReservaRepository reservaRepository;
+
+	
+	private User getUserByUsername(String username) {
+		return authService.findByGmail(username)
+				.orElseThrow(() -> new RuntimeException("User not found: " + username)).getUser();
+	}
 
 	public UserService(UserRepository repository, AuthService authService, AuthUserRepository authUserRepository,
-			PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+			PasswordEncoder passwordEncoder, RoleRepository roleRepository, ReservaRepository reservaRepository) {
 		this.repository = repository;
 		this.authService = authService;
 		this.authUserRepository = authUserRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.roleRepository = roleRepository;
-	}
-
-	private User getUserByUsername(String username) {
-		return authService.findByGmail(username)
-				.orElseThrow(() -> new RuntimeException("User not found: " + username)).getUser();
+		this.reservaRepository = reservaRepository;
 	}
 
 	private AuthUser getAuthUser(String username) {
@@ -194,4 +200,9 @@ public class UserService {
 		});
 	}
 
+    @Transactional
+    public List<Reserva> listarReservasPorUsuario(String username) {
+        User user = getUserByUsername(username);
+        return reservaRepository.findByCliente(user);
+    }
 }
