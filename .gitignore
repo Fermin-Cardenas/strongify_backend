@@ -1,1 +1,117 @@
-/src/main/resources/application.properties
+# ========================
+# ☕ Java / Spring Boot
+# ========================
+*.class
+*.log
+*.ctxt
+target/
+out/
+build/
+
+# Ignore generated sources
+generated-sources/
+generated-test-sources/
+
+# ========================
+# 🧱 Maven / Gradle
+# ========================
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+.gradle/
+*.gradle
+gradle-app.setting
+!gradle-wrapper.properties
+!gradle-wrapper.jar
+
+# ========================
+# 🧰 IDEs y herramientas
+# ========================
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse / STS
+.project
+.classpath
+.settings/
+.sts4-cache/
+.factorypath
+.springBeans
+bin/
+
+# VS Code
+.vscode/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# ========================
+# 🧪 Tests / Reports
+# ========================
+test-output/
+surefire-reports/
+jacoco-report/
+coverage/
+
+# ========================
+# 🐳 Docker
+# ========================
+# Archivos de volúmenes, overrides o logs locales
+docker-compose.override.yml
+docker-compose.local.yml
+docker-data/
+docker-logs/
+*.pid
+
+# No ignores el Dockerfile ni el docker-compose.yml principal
+# ya que los necesitas en Render
+
+# ========================
+# 🔐 Configuración sensible
+# ========================
+# Spring Boot config
+src/main/resources/application.properties
+src/main/resources/application.yml
+src/main/resources/application-dev.properties
+src/main/resources/application-prod.properties
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+
+# ========================
+# ☁️ Despliegue / Render
+# ========================
+# Archivos temporales generados por Render o builds previos
+render-build.log
+render.yaml
+*.render
+
+# ========================
+# 🧩 Sistema operativo
+# ========================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# ========================
+# 📦 Dependencias o backups
+# ========================
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+*.bak
+*.tmp
