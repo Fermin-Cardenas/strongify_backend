@@ -27,7 +27,7 @@ public class Reserva {
 
     // Relación con la tabla usuarios (cliente)
     @ManyToOne
-    @JoinColumn(name = "cliente_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "cliente_id", referencedColumnName = "user_id", nullable = false)
     private User cliente;
 
     // Relación con la tabla agenda_clases

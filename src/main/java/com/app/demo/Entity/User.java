@@ -1,6 +1,7 @@
 package com.app.demo.Entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -9,8 +10,15 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
+enum Gender {
+	MALE,
+	FEMALE,
+	OTHER
+}
 
 @Entity
 @Table(name = "user_info")
@@ -29,6 +37,10 @@ public class User {
 	@Column(name = "phone_number", unique = true)
 	private String phoneNumber;
 	private String photo_url;
+	private Gender gender;
+
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Pago> pagos;
 
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private AuthUser authUser;
@@ -38,14 +50,15 @@ public class User {
 	}
 
 	public User(Long userId, String firstName, String lastName, LocalDate birthday, String phoneNumber,
-			String photo_url, AuthUser authUser) {
-		super();
+			String photo_url, Gender gender, List<Pago> pagos, AuthUser authUser) {
 		this.userId = userId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.birthday = birthday;
 		this.phoneNumber = phoneNumber;
 		this.photo_url = photo_url;
+		this.gender = gender;
+		this.pagos = pagos;
 		this.authUser = authUser;
 	}
 
@@ -103,6 +116,22 @@ public class User {
 
 	public void setAuthUser(AuthUser authUser) {
 		this.authUser = authUser;
+	}
+
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public List<Pago> getPagos() {
+		return pagos;
+	}
+
+	public void setPagos(List<Pago> pagos) {
+		this.pagos = pagos;
 	}
 
 }

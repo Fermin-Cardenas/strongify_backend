@@ -53,6 +53,8 @@ public class AuthUser implements UserDetails {
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
+	private boolean active = true;
+
 	public AuthUser() {
 
 	}
