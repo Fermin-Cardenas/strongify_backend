@@ -7,13 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-enum Tipo {
-    PAGO_SEMANAL,
-    POR_SESION,
-    MENSUAL,
-    ANUAL
-}
-
 @Entity
 @Table(name = "membresias_tipos")
 public class Membresia {
@@ -28,6 +21,8 @@ public class Membresia {
     private Double costo;
     @Column(name = "duracion_dias")
     private Integer duracion;
+
+    public Membresia() {}
 
     public Membresia(Long membresiaId, Tipo tipo, Double costo, Integer duracion) {
         this.membresiaId = membresiaId;

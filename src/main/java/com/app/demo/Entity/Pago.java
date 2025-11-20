@@ -40,6 +40,8 @@ public class Pago {
     @Column(name = "id_transaccion_pasarela", length = 255)
     private String idTransaccionPasarela; // ID de la pasarela de pago (stripe, etc.)
 
+    public Pago() {}
+
     public Pago(Long pagoId, User usuario, Membresia membresia, BigDecimal monto, OffsetDateTime fechaPago,
             String metodoPago, String idTransaccionPasarela) {
         this.pagoId = pagoId;

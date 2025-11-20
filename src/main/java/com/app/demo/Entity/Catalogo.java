@@ -23,6 +23,8 @@ public class Catalogo {
     @Column(name = "cupo_maximo")
     private Integer cupo;
 
+    public Catalogo() {}
+
     public Catalogo(Long catalogoId, String nombre, String descripcion, Integer duracion, Integer cupo) {
         this.catalogoId = catalogoId;
         this.nombre = nombre;

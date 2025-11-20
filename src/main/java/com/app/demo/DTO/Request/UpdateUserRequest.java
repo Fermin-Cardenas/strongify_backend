@@ -9,6 +9,7 @@ public class UpdateUserRequest {
 	private String phoneNumber;
 	private String photoUrl;
 	private LocalDate birthday;
+	private Double altura; // Altura en metros (ej: 1.75)
 
 	public UpdateUserRequest() {
 
@@ -21,6 +22,16 @@ public class UpdateUserRequest {
 		this.phoneNumber = phoneNumber;
 		this.photoUrl = photoUrl;
 		this.birthday = birthday;
+	}
+
+	public UpdateUserRequest(String firstName, String lastName, String phoneNumber, String photoUrl, LocalDate birthday, Double altura) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phoneNumber = phoneNumber;
+		this.photoUrl = photoUrl;
+		this.birthday = birthday;
+		this.altura = altura;
 	}
 
 	public String getFirstName() {
@@ -61,6 +72,14 @@ public class UpdateUserRequest {
 
 	public void setBirthday(LocalDate birthday) {
 		this.birthday = birthday;
+	}
+
+	public Double getAltura() {
+		return altura;
+	}
+
+	public void setAltura(Double altura) {
+		this.altura = altura;
 	}
 
 }

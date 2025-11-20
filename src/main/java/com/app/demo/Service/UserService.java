@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.app.demo.DTO.Request.ChangePasswordRequest;
 import com.app.demo.DTO.Request.UpdateRolRequest;
 import com.app.demo.DTO.Request.UpdateUserRequest;
+import com.app.demo.DTO.Response.ReservaResponse;
 import com.app.demo.DTO.Response.UserResponse;
 import com.app.demo.Entity.AuthUser;
 import com.app.demo.Entity.Reserva;
@@ -41,7 +43,7 @@ public class UserService {
 	private final ReservaRepository reservaRepository;
 
 	
-	private User getUserByUsername(String username) {
+	public User getUserByUsername(String username) {
 		return authService.findByGmail(username)
 				.orElseThrow(() -> new RuntimeException("User not found: " + username)).getUser();
 	}
@@ -70,7 +72,7 @@ public class UserService {
 
 			return new UserResponse(user.getUserId(), user.getFirstName(), user.getLastName(), user.getPhoneNumber(),
 					user.getPhoto_url(), authUser.getUsername(),
-					birthday, authUser.getLastLogin());
+					birthday, authUser.getLastLogin(), user.getAltura());
 		});
 	}
 
@@ -89,6 +91,14 @@ public class UserService {
 				existingUser.setPhoneNumber(request.getPhoneNumber());
 			if (request.getPhotoUrl() != null)
 				existingUser.setPhoto_url(request.getPhotoUrl());
+			if (request.getAltura() != null) {
+				// Validar altura (entre 0.5 y 3.0 metros)
+				Double altura = request.getAltura();
+				if (altura < 0.5 || altura > 3.0) {
+					throw new RuntimeException("La altura debe estar entre 0.5 y 3.0 metros");
+				}
+				existingUser.setAltura(altura);
+			}
 
 			AuthUser authUser = authUserRepository.findByUser(existingUser)
 					.orElseThrow(() -> new RuntimeException("User not found"));
@@ -101,7 +111,8 @@ public class UserService {
 					savedUser.getPhoneNumber(), savedUser.getPhoto_url(),
 					authUserRepository.findByUser(savedUser).map(AuthUser::getUsername).orElse(""),
 					savedUser.getBirthday(),
-					savedUser.getAuthUser().getLastLogin());
+					savedUser.getAuthUser().getLastLogin(),
+					savedUser.getAltura());
 		});
 	}
 
@@ -196,13 +207,56 @@ public class UserService {
 					updatedUser.getPhoto_url(),
 					authUser.getUsername(),
 					updatedUser.getBirthday(),
-					authUser.getLastLogin());
+					authUser.getLastLogin(),
+					updatedUser.getAltura());
 		});
 	}
 
     @Transactional
-    public List<Reserva> listarReservasPorUsuario(String username) {
+    public List<ReservaResponse> listarReservasPorUsuario(String username) {
         User user = getUserByUsername(username);
-        return reservaRepository.findByCliente(user);
+        List<Reserva> reservas = reservaRepository.findByCliente(user);
+        
+        return reservas.stream()
+                .map(this::convertirAReservaResponse)
+                .collect(Collectors.toList());
+    }
+
+    private ReservaResponse convertirAReservaResponse(Reserva reserva) {
+        // Obtener username del cliente
+        String clienteUsername = null;
+        Optional<AuthUser> authUserOpt = authUserRepository.findByUser(reserva.getCliente());
+        if (authUserOpt.isPresent()) {
+            clienteUsername = authUserOpt.get().getUsername();
+        }
+
+        // Crear ClienteInfo
+        ReservaResponse.ClienteInfo clienteInfo = new ReservaResponse.ClienteInfo(
+            reserva.getCliente().getUserId(),
+            clienteUsername
+        );
+
+        // Obtener nombre de la clase desde el catálogo
+        String nombreClase = null;
+        if (reserva.getClaseAgendada() != null && 
+            reserva.getClaseAgendada().getCatalogo() != null) {
+            nombreClase = reserva.getClaseAgendada().getCatalogo().getNombre();
+        }
+
+        // Crear ClaseAgendadaInfo
+        ReservaResponse.ClaseAgendadaInfo claseInfo = new ReservaResponse.ClaseAgendadaInfo(
+            reserva.getClaseAgendada() != null ? reserva.getClaseAgendada().getId() : null,
+            nombreClase
+        );
+
+        // Crear y retornar ReservaResponse
+        return new ReservaResponse(
+            reserva.getId(),
+            clienteInfo,
+            claseInfo,
+            reserva.getFechaReserva(),
+            reserva.getEstado(),
+            reserva.getAsistencia()
+        );
     }
 }

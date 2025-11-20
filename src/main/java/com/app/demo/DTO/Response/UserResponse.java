@@ -12,6 +12,7 @@ public class UserResponse {
 	private String username;
 	private LocalDate birthday;
 	private LocalDateTime lastLogin;
+	private Double altura; // Altura en metros (ej: 1.75)
 
 	public UserResponse() {
 	}
@@ -27,6 +28,20 @@ public class UserResponse {
 		this.username = username;
 		this.birthday = birthday;
 		this.lastLogin = lastLogin;
+	}
+
+	public UserResponse(Long id, String firstName, String lastName, String phoneNumber, String photoUrl,
+			String username, LocalDate birthday, LocalDateTime lastLogin, Double altura) {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phoneNumber = phoneNumber;
+		this.photoUrl = photoUrl;
+		this.username = username;
+		this.birthday = birthday;
+		this.lastLogin = lastLogin;
+		this.altura = altura;
 	}
 
 	public Long getId() {
@@ -91,5 +106,13 @@ public class UserResponse {
 
 	public void setLastLogin(LocalDateTime lastLogin) {
 		this.lastLogin = lastLogin;
+	}
+
+	public Double getAltura() {
+		return altura;
+	}
+
+	public void setAltura(Double altura) {
+		this.altura = altura;
 	}
 }

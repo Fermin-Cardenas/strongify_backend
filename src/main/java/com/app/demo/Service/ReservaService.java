@@ -72,8 +72,16 @@ public class ReservaService {
             throw new RuntimeException("Ya tienes una reserva para esta clase.");
         }
 
-        // Verificar si hay cupo disponible (opcional)
-        if (clase.getCupoActual() != null && clase.getCupoActual() <= 0) {
+        // Obtener el cupo máximo del catálogo
+        Integer cupoMaximo = null;
+        if (clase.getCatalogo() != null && clase.getCatalogo().getCupo() != null) {
+            cupoMaximo = clase.getCatalogo().getCupo();
+        }
+
+        // Verificar si hay cupo disponible
+        // cupoActual representa el número de personas registradas (ocupadas)
+        Integer cupoActual = clase.getCupoActual() != null ? clase.getCupoActual() : 0;
+        if (cupoMaximo != null && cupoActual >= cupoMaximo) {
             throw new RuntimeException("No hay cupos disponibles para esta clase.");
         }
 
@@ -85,14 +93,52 @@ public class ReservaService {
         nuevaReserva.setAsistencia(false);
         nuevaReserva.setFechaReserva(java.time.OffsetDateTime.now());
 
-        // Actualizar el cupo de la clase si aplica
-        if (clase.getCupoActual() != null) {
-            clase.setCupoActual(clase.getCupoActual() - 1);
-            agendaClaseRepository.save(clase);
-        }
+        // Actualizar el cupo de la clase (incrementar personas registradas)
+        clase.setCupoActual(cupoActual + 1);
+        agendaClaseRepository.save(clase);
 
         // Guardar la reserva
         return reservaRepository.save(nuevaReserva);
 
+    }
+
+    @Transactional
+    public void cancelarReserva(Long reservaId, String username) {
+        User user = getUserByUsername(username);
+        
+        Optional<Reserva> reservaOptional = reservaRepository.findById(reservaId);
+        
+        if (reservaOptional.isEmpty()) {
+            throw new RuntimeException("Reserva no encontrada con ID: " + reservaId);
+        }
+
+        Reserva reserva = reservaOptional.get();
+        
+        // Verificar que la reserva pertenece al usuario
+        if (!reserva.getCliente().getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("No tienes permiso para cancelar esta reserva");
+        }
+
+        // Verificar que la reserva no esté cancelada ya
+        if ("CANCELADA".equals(reserva.getEstado())) {
+            throw new RuntimeException("La reserva ya está cancelada");
+        }
+
+        // Actualizar cupo de la clase (decrementar personas registradas)
+        AgendaClase clase = reserva.getClaseAgendada();
+        if (clase != null) {
+            Integer cupoActual = clase.getCupoActual() != null ? clase.getCupoActual() : 0;
+            // Solo decrementar si es mayor a 0 para evitar valores negativos
+            if (cupoActual > 0) {
+                clase.setCupoActual(cupoActual - 1);
+            } else {
+                clase.setCupoActual(0);
+            }
+            agendaClaseRepository.save(clase);
+        }
+
+        // Cancelar la reserva
+        reserva.setEstado("CANCELADA");
+        reservaRepository.save(reserva);
     }
 }

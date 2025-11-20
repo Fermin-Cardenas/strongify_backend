@@ -3,6 +3,7 @@ package com.app.demo.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,29 +61,83 @@ public class AuthService {
     
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        User user = new User();
-        user.setFirstName(request.getFirst_name());
-        user.setLastName(request.getLast_name());
-        user.setBirthday(request.getBirthday());
-        user.setPhoneNumber(request.getPhone());
-        user = userRepository.save(user);
+        // Validar que el username no exista
+        if (authUserRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new RuntimeException("El nombre de usuario ya está en uso");
+        }
 
-        Role role = roleRepository.findById(2L).orElseThrow(() -> new RuntimeException("Default role not found"));
+        // Validar que el teléfono no exista
+        if (userRepository.findByPhoneNumber(request.getPhone()).isPresent()) {
+            throw new RuntimeException("El número de teléfono ya está registrado");
+        }
 
-        AuthUser authUser = new AuthUser();
-        authUser.setUsername(request.getUsername());
-        authUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        authUser.setUser(user);
-        authUser.setRole(role);
-        authUser = authUserRepository.save(authUser);
+        // Validar que las contraseñas coincidan
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new RuntimeException("Las contraseñas no coinciden");
+        }
 
-        AuthResponse response = new AuthResponse();
-        response.setToken(jwtService.getToken(authUser));
+        try {
+            User user = new User();
+            user.setFirstName(request.getFirst_name());
+            user.setLastName(request.getLast_name());
+            user.setBirthday(request.getBirthday());
+            user.setPhoneNumber(request.getPhone());
+            user = userRepository.save(user);
 
-        return response;
+            // Buscar rol "USER" por nombre, si no existe, crearlo
+            Role role = roleRepository.findByName("USER")
+                    .orElseGet(() -> {
+                        Role newRole = new Role();
+                        newRole.setName("USER");
+                        newRole.setDescription("Usuario regular");
+                        return roleRepository.save(newRole);
+                    });
+
+            AuthUser authUser = new AuthUser();
+            authUser.setUsername(request.getUsername());
+            authUser.setPassword(passwordEncoder.encode(request.getPassword()));
+            authUser.setUser(user);
+            authUser.setRole(role);
+            authUser = authUserRepository.save(authUser);
+
+            AuthResponse response = new AuthResponse();
+            response.setToken(jwtService.getToken(authUser));
+
+            return response;
+        } catch (DataIntegrityViolationException e) {
+            String errorMessage = "Error al registrar usuario";
+            if (e.getMessage() != null) {
+                if (e.getMessage().contains("phone_number")) {
+                    errorMessage = "El número de teléfono ya está registrado";
+                } else if (e.getMessage().contains("username")) {
+                    errorMessage = "El nombre de usuario ya está en uso";
+                }
+            }
+            throw new RuntimeException(errorMessage, e);
+        }
     }
     
     public Optional<AuthUser> findByGmail(String username) {
         return authUserRepository.findByUsername(username);
+    }
+
+    public void forgotPassword(String username) {
+        Optional<AuthUser> authUserOptional = authUserRepository.findByUsername(username);
+        
+        if (authUserOptional.isEmpty()) {
+            // Por seguridad, no revelamos si el usuario existe o no
+            throw new RuntimeException("Si el usuario existe, se enviará un email con instrucciones para recuperar la contraseña");
+        }
+
+        AuthUser authUser = authUserOptional.get();
+        
+        // TODO: Aquí deberías implementar el envío de email con un token de recuperación
+        // Por ahora, solo lanzamos una excepción genérica
+        // En producción, deberías:
+        // 1. Generar un token de recuperación
+        // 2. Guardarlo en la base de datos con expiración
+        // 3. Enviar un email al usuario con el link de recuperación
+        
+        throw new RuntimeException("Funcionalidad de recuperación de contraseña aún no implementada. Por favor, contacta al administrador.");
     }
 }

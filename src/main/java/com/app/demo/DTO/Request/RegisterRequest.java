@@ -73,4 +73,12 @@ public class RegisterRequest {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
 }

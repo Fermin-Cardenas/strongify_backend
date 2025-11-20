@@ -38,6 +38,8 @@ public class User {
 	private String phoneNumber;
 	private String photo_url;
 	private Gender gender;
+	@Column(name = "altura_m")
+	private Double altura; // Altura en metros para calcular IMC
 
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Pago> pagos;
@@ -132,6 +134,14 @@ public class User {
 
 	public void setPagos(List<Pago> pagos) {
 		this.pagos = pagos;
+	}
+
+	public Double getAltura() {
+		return altura;
+	}
+
+	public void setAltura(Double altura) {
+		this.altura = altura;
 	}
 
 }

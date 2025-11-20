@@ -3,6 +3,7 @@ package com.app.demo.Controller;
 import java.security.Principal;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +43,17 @@ public class ReservaController {
             String username = principal.getName(); // viene del token JWT
             Reserva nuevaReserva = reservaService.reservar(username, claseId);
             return ResponseEntity.ok(nuevaReserva);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> cancelarReserva(@PathVariable Long id, Principal principal) {
+        try {
+            String username = principal.getName();
+            reservaService.cancelarReserva(id, username);
+            return ResponseEntity.ok("Reserva cancelada exitosamente");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

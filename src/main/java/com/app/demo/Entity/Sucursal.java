@@ -19,6 +19,8 @@ public class Sucursal {
     private String nombre;
     private String direccion;
 
+    public Sucursal() {}
+
     public Sucursal(Long sucursalId, String nombre, String direccion) {
         this.sucursalId = sucursalId;
         this.nombre = nombre;

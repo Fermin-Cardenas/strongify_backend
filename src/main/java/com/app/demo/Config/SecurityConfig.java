@@ -45,6 +45,8 @@ public class SecurityConfig {
 						.permitAll()
 						.requestMatchers("/images/**").permitAll()
 						.anyRequest().authenticated())
+				.exceptionHandling(exceptions -> exceptions
+						.accessDeniedHandler(new SecurityExceptionHandler()))
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
@@ -53,11 +55,12 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:4200")); // tu front
+		configuration.setAllowedOrigins(List.of("*")); // Permitir todos los orígenes para desarrollo
 		configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
-		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+		configuration.setAllowedHeaders(List.of("*")); // Permitir todos los headers
 		configuration.setExposedHeaders(List.of("Authorization")); // si devuelves token en headers
-		configuration.setAllowCredentials(true);
+		configuration.setAllowCredentials(false); // Debe ser false cuando se usa "*" en origins
+		configuration.setMaxAge(3600L); // Cache preflight por 1 hora
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
